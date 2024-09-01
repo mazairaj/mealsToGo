@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
-import { Searchbar } from "react-native-paper";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { ActivityIndicator } from "react-native-paper";
 
@@ -9,10 +8,7 @@ import { RestaurantInfoCard } from "../components/restaurant-info-card.component
 import { Spacer } from "../../../components/spacer/spacer.component";
 
 import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
-
-const SearchContainer = styled.View`
-  padding: ${(props) => props.theme.space[3]};
-`;
+import { Search } from "../components/search.component";
 
 const RestaurantList = styled(FlatList).attrs({
   contentContainerStyle: {
@@ -29,9 +25,9 @@ const LoadingContainer = styled.View`
   left: 50%;
 `;
 
-export const RestaurantsScreen = () => {
+export const RestaurantsScreen = ({ navigation }) => {
   const theme = useTheme(); // Access the theme here
-  const { isLoading, error, restaurants } = useContext(RestaurantsContext);
+  const { isLoading, restaurants } = useContext(RestaurantsContext);
   return (
     <SafeArea>
       {isLoading && (
@@ -43,16 +39,18 @@ export const RestaurantsScreen = () => {
           />
         </LoadingContainer>
       )}
-      <SearchContainer>
-        <Searchbar />
-      </SearchContainer>
+      <Search />
       <RestaurantList
         data={restaurants}
         renderItem={({ item }) => {
           return (
-            <Spacer position="bottom" size="large">
-              <RestaurantInfoCard restaurant={item} />
-            </Spacer>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("RestaurantDetail")}
+            >
+              <Spacer position="bottom" size="large">
+                <RestaurantInfoCard restaurant={item} />
+              </Spacer>
+            </TouchableOpacity>
           );
         }}
         keyExtractor={(item) => item.name}
